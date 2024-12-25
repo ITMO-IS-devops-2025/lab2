@@ -1,0 +1,21 @@
+- name: Start django app on web servers
+  hosts: app
+  become: true
+
+  vars:
+    my_django_app_container_name: app
+    my_django_app_image: timurbabs/django
+
+  tasks:
+    - name: Include docker role
+      ansible.builtin.include_role:
+        name: docker
+
+    - name: Recreate django app container
+      community.docker.docker_container:
+        name: "{{ my_django_app_container_name }}"
+        image: "{{ my_django_app_image }}"
+        state: started
+        recreate: true
+        ports:
+          - 8000:8000
